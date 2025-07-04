@@ -38,7 +38,7 @@ async def simulate_handler(event):
         speed = downloaded / elapsed if elapsed > 0 else 0
         eta = (total_size_mb - downloaded) / speed if speed > 0 else 0
         return (
-            f"▶️ Downloading FAKE_FILE.mp4\n"
+            f"▶️ Downloading Data\n"
             f"{bar} {percent:.1f}% | {downloaded:.2f}MB / {total_size_mb:.0f}MB | "
             f"{speed:.2f} MB/s | ETA: {int(eta)}s"
         )
