@@ -11,7 +11,7 @@ bot_token = "7325887777:AAEMQ8oIEfLQOx1ErmV7Si196woTM"
 
 client = TelegramClient('bot', api_id, api_hash).start(bot_token=bot_token)
 
-path = "/storage/emulated/0/genetic_apex_links.json"
+path = "/root/genetic_apex_links.json"
 
 # --- Load links from JSON ---
 with open(path, "r") as f:
