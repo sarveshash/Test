@@ -7,7 +7,7 @@ from telethon import TelegramClient, events
 # --- Bot credentials ---
 api_id = 27715449
 api_hash = "dd3da7c5045f7679ff1f0ed0c82404e0"
-bot_token = "7325887777:AAEMQ8oIEfLQOx1ErmV7Si196woTM"
+bot_token = "7325887777:AAEMq8oIEfLQOx1ErmV7Si196woTMdN93MA"
 
 client = TelegramClient('bot', api_id, api_hash).start(bot_token=bot_token)
 
