@@ -1,25 +1,36 @@
+from telethon import TelegramClient, events
 from PIL import Image, ImageDraw
+import os
+
+# ========== Credentials ==========
+api_id = 27715449
+api_hash = "dd3da7c5045f7679ff1f0ed0c82404e0"
+bot_token = "7981770051:AAH5isv89k-20WiAXJZwW7hjaG0S6Dvrkdg"
+
+# ========== Bot Client ==========
+bot = TelegramClient('gygybot', api_id, api_hash).start(bot_token=bot_token)
+
+# ========== Color Helpers ==========
 def hex_to_rgb(hex_code):
     hex_code = hex_code.lstrip('#')
     return tuple(int(hex_code[i:i+2], 16) for i in (0, 2, 4))
 
-# Gradient colors
 hex_colors = ["#FBC5DC", "#E7CCFF", "#CFD3FF", "#A1F0F7", "#A7F4D0"]
 rgb_colors = [hex_to_rgb(c) for c in hex_colors]
 unfilled_color = hex_to_rgb("#EEF6F9")
 
-# Bar settings
+# ========== Bar Settings ==========
 bar_width = 400
 bar_height = 100
 radius = bar_height // 2
 padding = 100
 
-# Load pointer image
-pointer_path = "/storage/emulated/0/za.png"
+pointer_path = "pointer.png"
+template_path = "template.jpg"
+
 pointer_img = Image.open(pointer_path).convert("RGBA")
 pointer_w, pointer_h = pointer_img.size
 
-# Generate a single progress bar image
 def generate_bar(progress_percent):
     canvas_width = bar_width + padding * 2
     canvas_height = max(bar_height, pointer_h + 20)
@@ -28,8 +39,7 @@ def generate_bar(progress_percent):
 
     bar_y = (canvas_height - bar_height) // 2
     bar_x_start = padding
-    draw.rounded_rectangle([(bar_x_start, bar_y),
-                            (bar_x_start + bar_width, bar_y + bar_height)],
+    draw.rounded_rectangle([(bar_x_start, bar_y), (bar_x_start + bar_width, bar_y + bar_height)],
                            radius=radius, fill=unfilled_color)
 
     progress_px = int((progress_percent / 100) * bar_width)
@@ -62,20 +72,16 @@ def generate_bar(progress_percent):
 
     return canvas
 
-# Resize helper
 def shrink(img, ratio=0.65):
     return img.resize((int(img.width * ratio), int(img.height * ratio)), resample=Image.LANCZOS)
 
-# === Main function to generate progress image ===
-def generate_progress_image(max_bars=2, percents=[67, 100], user_id=None):
-    bg_path = "/storage/emulated/0/templatepack.png"
-    bg = Image.open(bg_path).convert("RGBA")
+def generate_progress_image(max_bars=2, percents=[26, 89], user_id=None):
+    bg = Image.open(template_path).convert("RGBA")
 
     if max_bars > 2 or max_bars < 1 or len(percents) != max_bars:
         print("❌ Error: max_bars must be 1 or 2, and percents must match.")
         return
 
-    # Fixed bar positions
     positions = [(740, 300), (1100, 835)]
     for i in range(max_bars):
         bar_img = shrink(generate_bar(percents[i]))
@@ -85,8 +91,19 @@ def generate_progress_image(max_bars=2, percents=[67, 100], user_id=None):
         bg.paste(bar_img, (bar_x, bar_y), bar_img)
         print(f"📍 Bar {i+1} ({percents[i]}%) pasted at center: ({cx}, {cy})")
 
-    # Save
-    output_path =f"packpil1_{user_id}.png"
+    output_path = f"packpil1_{user_id}.png"
     bg.save(output_path)
-    
-generate_progress_image(max_bars=2, percents=[26, 89]) 
+    return output_path
+
+# ========== Bot Handler ==========
+@bot.on(events.NewMessage(pattern="/image"))
+async def handler(event):
+    user_id = event.sender_id
+    output_path = generate_progress_image(user_id=user_id)
+    if output_path:
+        await event.respond(file=output_path, message="📊 Here's your progress bar!")
+        os.remove(output_path)
+
+# ========== Start Bot ==========
+print("✅ Bot is running...")
+bot.run_until_disconnected()
