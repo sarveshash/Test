@@ -1,12 +1,12 @@
-from moviepy.editor import ImageClip
-from PIL import Image
-import numpy as np
+from telethon.sync import TelegramClient
 
-# Load the background image
-img = Image.open("xyz.png").convert("RGB")
-img = img.resize((500, 500))  # arbitrary size
-img_np = np.array(img)
+api_id = 27715449
+api_hash = "dd3da7c5045f7679ff1f0ed0c82404e0"
+bot_token = "7981770051:AAH5isv89k-20WiAXJZwW7hjaG0S6Dvrkdg"
 
-# Create ImageClip and export as video
-clip = ImageClip(img_np).set_duration(3)
-clip.write_videofile("bg_only.mp4", codec="libx264", fps=24)
+# Start client
+bot = TelegramClient("send_to_me", api_id, api_hash).start(bot_token=bot_token)
+
+# Send to your Saved Messages
+bot.send_file("me", "bg_only.mp4", caption="🎬 Here's your generated video.")
+print("✅ Sent to your Telegram Saved Messages.")
