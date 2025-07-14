@@ -4,8 +4,8 @@ import asyncio
 
 # ========== STEP 1: PROCESS THE GIF ON IMAGE ==========
 
-gif_path = "input.gif"
-bg_image_path = "bg.png"
+gif_path = "Butterfree_Gigantamax.gif"
+bg_image_path = "xyz.png"
 output_video_path = "final.mp4"
 
 # Load GIF and background image
@@ -24,7 +24,7 @@ final.write_videofile(output_video_path, codec="libx264", preset="ultrafast", fp
 # Your Telegram API credentials (user account)
 api_id = 27715449
 api_hash = "dd3da7c5045f7679ff1f0ed0c82404e0"
-bot_username = "YourBotUsername"  # Replace with your actual bot username (without @)
+bot_username = "NintendroTestServerBot"  # Replace with your actual bot username (without @)
 
 client = TelegramClient("user_session", api_id, api_hash)
 
