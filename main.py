@@ -6,8 +6,8 @@ from telethon import TelegramClient
 import asyncio
 
 # === MoviePy: Overlay GIF on Image ===
-gif_path = "input.gif"         # Replace with your actual GIF file
-bg_image_path = "bg.png"       # Replace with your background image
+gif_path = "Butterfree_Gigantamax.gif"         # Replace with your actual GIF file
+bg_image_path = "xyz.png"       # Replace with your background image
 output_video_path = "final.mp4"
 
 # Load GIF and background image
