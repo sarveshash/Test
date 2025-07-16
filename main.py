@@ -12,7 +12,7 @@ bot_token = "7981770051:AAH5isv89k-20WiAXJZwW7hjaG0S6Dvrkdg"
 
 # === Files ===
 gif_path = "Butterfree_Gigantamax.gif"
-bg_image_path = "xyz.png"
+bg_image_path = "IMG_20240713_105340_289_20250717_045940_0000.jpg"
 
 # === Initialize Telegram Bot ===
 bot = TelegramClient("bot_session", api_id, api_hash).start(bot_token=bot_token)
