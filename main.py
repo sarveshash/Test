@@ -29,4 +29,4 @@ async def send_video():
 
     await client.disconnect()
 
-asyncio.run(send_video())
+await asyncio.run(send_video())
