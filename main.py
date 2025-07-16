@@ -1,6 +1,6 @@
 from moviepy.editor import VideoFileClip, ImageClip, CompositeVideoClip
-from telethon import TelegramClient
-import asyncio
+from telethon.sync import TelegramClient  # <== SYNC version
+import os
 
 # === Telegram credentials ===
 api_id = 27715449
@@ -18,15 +18,11 @@ gif_clip = VideoFileClip(gif_path).resize(0.5).set_position("center")
 final_clip = CompositeVideoClip([bg_clip, gif_clip])
 final_clip.write_videofile(output_path, fps=24)
 
-# === Step 2: Send video using Telethon ===
-async def send_video():
-    client = TelegramClient("bot_session", api_id, api_hash)
-    await client.start(bot_token=bot_token)
+# === Step 2: Send with Telethon (SYNC) ===
+client = TelegramClient("bot_session", api_id, api_hash)
+client.start(bot_token=bot_token)
 
-    # Replace with your actual username or chat ID
-    target = "me"  # or "@yourusername" or group id
-    await client.send_file(target, output_path, caption="🌟 Here's your generated video!")
+# Replace "me" with "@yourusername" or a group/chat ID if needed
+client.send_file("me", output_path, caption="🌟 Here's your generated video!")
 
-    await client.disconnect()
-
-await asyncio.run(send_video())
+client.disconnect()
