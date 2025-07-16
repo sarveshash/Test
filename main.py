@@ -1,57 +1,29 @@
-from telethon import TelegramClient, events
 from moviepy.editor import VideoFileClip, ImageClip, CompositeVideoClip
-from PIL import Image as PILImage
-import numpy as np
-import uuid
-import os
+from telethon import TelegramClient
+import asyncio
 
-# === Telegram Bot Credentials ===
+# === Telegram credentials ===
 api_id = 27715449
 api_hash = "dd3da7c5045f7679ff1f0ed0c82404e0"
 bot_token = "7981770051:AAH5isv89k-20WiAXJZwW7hjaG0S6Dvrkdg"
 
-# === Files ===
+# === File paths ===
 gif_path = "Butterfree_Gigantamax.gif"
 bg_image_path = "IMG_20240713_105340_289_20250717_045940_0000.jpg"
+output_path = "output.mp4"
 
-# === Initialize Telegram Bot ===
-bot = TelegramClient("bot_session", api_id, api_hash).start(bot_token=bot_token)
+# === Step 1: Generate video ===
+bg_clip = ImageClip(bg_image_path).set_duration(5)
+gif_clip = VideoFileClip(gif_path).resize(0.5).set_position("center")
+final_clip = CompositeVideoClip([bg_clip, gif_clip])
+final_clip.write_videofile(output_path, fps=24)
 
-@bot.on(events.NewMessage(pattern="/start"))
-async def handler(event):
-    await event.respond("🎞 Creating your custom Butterfree video... Please wait.")
+# === Step 2: Send with Telethon ===
+async def send_video():
+    client = TelegramClient('bot_session', api_id, api_hash)
+    await client.start(bot_token=bot_token)
 
-    output_path = f"final_{uuid.uuid4().hex[:8]}.mp4"
+    await client.send_file('me', output_path, caption="🌟 Here's your generated video!")
+    await client.disconnect()
 
-    try:
-        # Load GIF
-        gif = VideoFileClip(gif_path)
-
-        # Load background image using Pillow (safe for headless VPS)
-        pil_img = PILImage.open(bg_image_path).convert("RGB")
-        pil_img = pil_img.resize(gif.size)
-        bg_np = np.array(pil_img)
-        bg = ImageClip(bg_np).set_duration(gif.duration)
-
-        # Combine background and GIF
-        final = CompositeVideoClip([bg, gif.set_position("center")])
-        final.write_videofile(output_path, codec="libx264", preset="ultrafast", fps=24, verbose=False, logger=None)
-
-        # Free memory
-        gif.close()
-        bg.close()
-        final.close()
-
-        # Send the result to user
-        await bot.send_file(event.chat_id, output_path, caption="✅ Here’s your Butterfree video!")
-
-    except Exception as e:
-        await event.respond(f"❌ Error occurred:\n{e}")
-
-    finally:
-        # Clean up video file
-        if os.path.exists(output_path):
-            os.remove(output_path)
-
-print("🤖 Bot is running... Send /start to receive your video.")
-bot.run_until_disconnected()
+asyncio.run(send_video())
