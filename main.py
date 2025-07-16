@@ -26,7 +26,7 @@ async def start_handler(event):
     bg_clip = ImageClip(bg_image_path).set_duration(5)
     gif_clip = VideoFileClip(gif_path, has_mask=True).resize(0.5).set_position("center")
     final_clip = CompositeVideoClip([bg_clip, gif_clip])
-    final_clip.write_videofile(output_path, fps=24)
+    final_clip.write_videofile(output_path, fps=60)
 
     # Step 2: Send the video
     await bot.send_file(user_id, output_path, caption="🌟 Here's your generated video!")
