@@ -6,7 +6,7 @@ import io
 # === Telegram credentials ===
 api_id = 27715449
 api_hash = "dd3da7c5045f7679ff1f0ed0c82404e0"
-bot_token = "7981770051:AAH5isv89k-20WiAXJZwW7hjaG-G7QJv-Y"
+bot_token = "7981770051:AAH5isv89k-20WiAXJZwW7hjaG0S6Dvrkdg"
 
 # === File paths ===
 poke1_path = "pikachu.png"
