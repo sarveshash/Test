@@ -55,7 +55,7 @@ async def send_dual_bar_image(event):
     await bot.send_file(
         event.chat_id,
         image_path,
-        caption=f"⚡ Pikachu vs Lucario 🥊",
+        
         buttons=[[Button.inline("🔁 Recheck", b"recheck")]]
     )
 
@@ -71,7 +71,7 @@ async def handle_recheck(event):
     await event.edit(
         
         image_path,
-        caption=f"⚡ Pikachu vs Lucario 🥊",
+        
         buttons=[[Button.inline("🔁 Recheck", b"recheck")]]
     )
 
