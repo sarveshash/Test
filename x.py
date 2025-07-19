@@ -13,10 +13,9 @@ bot = TelegramClient('poke_hp_bot', api_id, api_hash).start(bot_token=bot_token)
 
 # === Function to create the HP bar image ===
 def create_hp_image(poke1_path, poke2_path, hp1, hp2):
+    # Load and resize Pokémon images
     poke1 = Image.open(poke1_path).convert("RGBA")
     poke2 = Image.open(poke2_path).convert("RGBA")
-
-    # Resize images to 70%
     poke1 = poke1.resize((int(poke1.width * 0.7), int(poke1.height * 0.7)))
     poke2 = poke2.resize((int(poke2.width * 0.7), int(poke2.height * 0.7)))
 
@@ -37,14 +36,18 @@ def create_hp_image(poke1_path, poke2_path, hp1, hp2):
     draw_hp_bar(canvas.width - bar_width - 10, 10, hp1, (0, 255, 0))  # Pikachu HP (top-right)
     draw_hp_bar(canvas.width - bar_width - 10, canvas.height - bar_height - 10, hp2, (255, 0, 0))  # Lucario HP (bottom-right)
 
-    # Save to BytesIO and set name
+    # Save to BytesIO
     image_stream = io.BytesIO()
     canvas.save(image_stream, format="PNG")
-    image_stream.name = "hp_battle.png"  # Needed to send as image not document
+    image_stream.name = "hp_battle.png"
     image_stream.seek(0)
-    return image_stream
 
-# === Command handler: /bar ===
+    # Clean wrap to avoid PIL-related attribute error in Telethon
+    clean_stream = io.BytesIO(image_stream.read())
+    clean_stream.name = "hp_battle.png"
+    return clean_stream
+
+# === /bar command handler ===
 @bot.on(events.NewMessage(pattern='/bar'))
 async def send_hp_image(event):
     hp1 = random.randint(10, 100)
@@ -58,14 +61,14 @@ async def send_hp_image(event):
         buttons=[Button.inline("🔁 Recheck", b"recheck")]
     )
 
-# === Callback handler: Recheck HP ===
+# === Inline "🔁 Recheck" callback handler ===
 @bot.on(events.CallbackQuery(data=b"recheck"))
 async def recheck_hp(event):
     hp1 = random.randint(10, 100)
     hp2 = random.randint(10, 100)
     image = create_hp_image("pikachu.png", "lucario.png", hp1, hp2)
 
-    # Delete the old message and send a new one with updated HP
+    # Delete previous image message
     await event.message.delete()
 
     await bot.send_file(
