@@ -61,7 +61,7 @@ async def send_hp_image(event):
 async def recheck_hp(event):
     hp1 = random.randint(10, 100)
     hp2 = random.randint(10, 100)
-    image = create_hp_image("pikachu.webp", "lucario.webp", hp1, hp2)
+    image = create_hp_image("pikachu.png", "lucario.png", hp1, hp2)
 
     await event.edit(
         file=image,
