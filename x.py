@@ -66,11 +66,10 @@ async def handle_recheck(event):
     p2 = random.randint(1, 100)
     image_path = create_dual_bar_image(p1, p2)
 
-    # delete old message and resend
-    await event.delete()
 
-    await bot.send_file(
-        event.chat_id,
+
+    await event.edit(
+        
         image_path,
         caption=f"⚡ Pikachu vs Lucario 🥊",
         buttons=[[Button.inline("🔁 Recheck", b"recheck")]]
