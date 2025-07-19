@@ -7,7 +7,7 @@ api_id = 27715449
 api_hash = "dd3da7c5045f7679ff1f0ed0c82404e0"
 bot_token = "7981770051:AAH5isv89k-20WiAXJZwW7hjaG0S6Dvrkdg"
 
-bot = TelegramClient('bot', api_id, api_hash).start(bot_token=bot_token)
+bot = TelegramClient('bvot', api_id, api_hash).start(bot_token=bot_token)
 
 
 # Create image with 2 bars and 2 Pokémon
