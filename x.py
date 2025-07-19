@@ -70,7 +70,7 @@ async def handle_recheck(event):
 
     await event.edit(
         
-        image_path,
+        file=image_path,
         
         buttons=[[Button.inline("🔁 Recheck", b"recheck")]]
     )
