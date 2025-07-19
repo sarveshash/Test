@@ -13,7 +13,7 @@ poke1_path = "pikachu.png"
 poke2_path = "lucario.png"
 
 # === Create client ===
-bot = TelegramClient('bot', api_id, api_hash).start(bot_token=bot_token)
+bot = TelegramClient('bsn', api_id, api_hash).start(bot_token=bot_token)
 
 # === Resize and place Pokémon ===
 def create_battle_image():
