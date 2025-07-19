@@ -41,7 +41,7 @@ def create_dual_bar_image(p1_percent, p2_percent):
     draw_bar(50, p1_percent)
     draw_bar(160, p2_percent)
 
-    path = f"/tmp/battle_{p1_percent}_{p2_percent}.png"
+    path = f"battle_{p1_percent}_{p2_percent}.png"
     img.save(path)
     return path
 
