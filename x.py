@@ -58,9 +58,11 @@ def create_dual_bar_image(p1_percent, p2_percent):
 @bot.on(events.NewMessage(pattern='/bar'))
 async def send_dual_bar_image(event):
     p1 = random.randint(1, 100)
-    p2 = random.randint(1, 100)
+    p2 = random.randint(1, 100) 
+    t1=time.time()
     image_path = create_dual_bar_image(p1, p2)
-
+    t2=time.time()
+    await event.respond(t2-t1)
     await bot.send_file(
         event.chat_id,
         image_path,
@@ -73,8 +75,10 @@ async def send_dual_bar_image(event):
 async def handle_recheck(event):
     p1 = random.randint(1, 100)
     p2 = random.randint(1, 100)
+    t1=time.time()
     image_path = create_dual_bar_image(p1, p2)
-
+    t2=time.time()
+    await event.respond(t2-t1) 
     await event.edit(
         file=image_path,
         buttons=[[Button.inline("🔁 Recheck", b"recheck")]]
