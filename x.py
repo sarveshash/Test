@@ -14,7 +14,7 @@ def create_dual_bar_image(p1_percent, p2_percent):
     width, height = 500, 250
 
     # Load and resize background image
-    background = Image.open("bg.jpg").resize((width, height))
+    background = Image.open("bg2.jpg").resize((width, height))
     img = background.copy()
     draw = ImageDraw.Draw(img)
 
