@@ -1,4 +1,4 @@
-import random
+import random, time
 from PIL import Image, ImageDraw, ImageFont
 from telethon import TelegramClient, events, Button
 
