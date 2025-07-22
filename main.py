@@ -1,36 +1,35 @@
-from telethon import TelegramClient, events
-from moviepy.editor import VideoFileClip, ImageClip, CompositeVideoClip
+from sklearn.ensemble import IsolationForest
+import numpy as np
 
-# === Bot credentials ===
-api_id = 27715449
-api_hash = "dd3da7c5045f7679ff1f0ed0c82404e0"
-bot_token = "7981770051:AAH5isv89k-20WiAXJZwW7hjaG0S6Dvrkdg"
+# Simulated data: 100 time intervals (in seconds) between user commands
+# For example: [2.1, 3.0, 0.5, ...]
+user_times = np.random.normal(loc=2.5, scale=0.8, size=100)  # Assume this is your actual data
 
-# === File paths ===
-gif_path = "Butterfree_Gigantamax.gif"  # Make sure this has real transparency
-bg_image_path = "IMG_20240713_105340_289_20250717_045940_0000.jpg"
-output_path = "output.mp4"
+# Simulated 'behavior score' for current session (0 to 5, e.g., based on response delay, typing pattern etc.)
+current_behavior_score = 1.2  # 0 is most bot-like, 5 is most human-like
 
-# === Initialize bot ===
-bot = TelegramClient("bot_session", api_id, api_hash).start(bot_token=bot_token)
+# Combine into a feature set
+# Here: feature1 = mean of user_times, feature2 = standard deviation of times, feature3 = current score
+features = np.array([[np.mean(user_times), np.std(user_times), current_behavior_score]])
 
-# === On /start command ===
-@bot.on(events.NewMessage(pattern="/start"))
-async def start_handler(event):
-    sender = await event.get_sender()
-    user_id = sender.id
+# Prepare training data (you can use unlabeled historic sessions)
+# For simplicity, assume normal human behavior
+training_data = []
+for _ in range(200):
+    mean = np.random.uniform(2.0, 4.5)
+    std = np.random.uniform(0.3, 1.5)
+    score = np.random.uniform(2.0, 5.0)
+    training_data.append([mean, std, score])
+training_data = np.array(training_data)
 
-    await event.respond("🎥 Please wait while I generate your video...")
+# Train Isolation Forest
+model = IsolationForest(contamination=0.1, random_state=42)
+model.fit(training_data)
 
-    # Step 1: Generate the video
-    bg_clip = ImageClip(bg_image_path).set_duration(5)
-    gif_clip = VideoFileClip(gif_path, has_mask=True).resize(0.5).set_position("center")
-    final_clip = CompositeVideoClip([bg_clip, gif_clip])
-    final_clip.write_videofile(output_path, fps=60)
+# Predict: -1 is anomaly (likely bot), 1 is normal (likely human)
+prediction = model.predict(features)[0]
 
-    # Step 2: Send the video
-    await bot.send_file(user_id, output_path, caption="🌟 Here's your generated video!")
-
-# === Run bot ===
-print("✅ Bot is running. Send /start to trigger video creation.")
-bot.run_until_disconnected()
+if prediction == -1:
+    print("⚠️ Likely Auto/Bot Detected")
+else:
+    print("✅ Likely Human User")
