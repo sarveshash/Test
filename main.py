@@ -1,35 +1,57 @@
-from sklearn.ensemble import IsolationForest
 import numpy as np
+import random
+import scipy.stats
 
-# Simulated data: 100 time intervals (in seconds) between user commands
-# For example: [2.1, 3.0, 0.5, ...]
-user_times = np.random.normal(loc=2.5, scale=0.8, size=100)  # Assume this is your actual data
+# === Simulated user delays (replace with real data if needed) ===
+user_delays = [round(random.uniform(0.5, 5.0), 2) for _ in range(100)]
+behavior_score = round(random.uniform(0.0, 5.0), 2)  # Extra variable between 0–5
 
-# Simulated 'behavior score' for current session (0 to 5, e.g., based on response delay, typing pattern etc.)
-current_behavior_score = 1.2  # 0 is most bot-like, 5 is most human-like
+print("📝 User Delay List (in seconds):")
+print(user_delays)
+print(f"\n🧠 Simulated behavior_score variable: {behavior_score}")
 
-# Combine into a feature set
-# Here: feature1 = mean of user_times, feature2 = standard deviation of times, feature3 = current score
-features = np.array([[np.mean(user_times), np.std(user_times), current_behavior_score]])
+# === Rule 1: Uniformity Check ===
+diffs = np.diff(user_delays)  # Difference between consecutive delays
+uniform_score = np.std(diffs)
 
-# Prepare training data (you can use unlabeled historic sessions)
-# For simplicity, assume normal human behavior
-training_data = []
-for _ in range(200):
-    mean = np.random.uniform(2.0, 4.5)
-    std = np.random.uniform(0.3, 1.5)
-    score = np.random.uniform(2.0, 5.0)
-    training_data.append([mean, std, score])
-training_data = np.array(training_data)
+# === Rule 2: Checkpoint Behavior Change ===
+checkpoint_start = 45
+checkpoint_end = 55
+before = user_delays[checkpoint_start-10:checkpoint_start]
+after = user_delays[checkpoint_end:checkpoint_end+10]
 
-# Train Isolation Forest
-model = IsolationForest(contamination=0.1, random_state=42)
-model.fit(training_data)
+mean_before = np.mean(before)
+mean_after = np.mean(after)
+pattern_change = abs(mean_after - mean_before)
 
-# Predict: -1 is anomaly (likely bot), 1 is normal (likely human)
-prediction = model.predict(features)[0]
+# === Rule 3: Entropy (randomness of delays) ===
+hist, _ = np.histogram(user_delays, bins=10)
+entropy = scipy.stats.entropy(hist)
 
-if prediction == -1:
-    print("⚠️ Likely Auto/Bot Detected")
+# === Decision Scoring ===
+flags = 0
+if uniform_score < 0.3:
+    print("\n⚠️ Uniform timing detected (likely bot)")
+    flags += 1
+if pattern_change < 0.2:
+    print("⚠️ No pattern change after checkpoint (likely bot)")
+    flags += 1
+if entropy < 1.0:
+    print("⚠️ Low entropy in delays (likely bot)")
+    flags += 1
+if behavior_score < 1.5:
+    print("⚠️ Low behavior score (likely bot)")
+    flags += 1
+
+# === Final Decision ===
+print("\n🔎 Analysis Summary:")
+print(f"→ Uniform Score (std of intervals): {uniform_score:.3f}")
+print(f"→ Pattern Change (before vs after checkpoint): {pattern_change:.3f}")
+print(f"→ Entropy of delays: {entropy:.3f}")
+print(f"→ Behavior Score: {behavior_score}")
+
+print("\n📢 Final AI-style Decision:")
+if flags >= 2:
+    print("❌ Likely BOT Detected (Auto)")
 else:
-    print("✅ Likely Human User")
+    print("✅ Likely HUMAN Detected (Manual)")
